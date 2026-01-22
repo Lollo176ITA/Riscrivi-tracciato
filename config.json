@@ -2,5 +2,6 @@
     "columns": [
         "numero",
         "cognome"
-    ]
+    ],
+    "zip_name": "output"
 }

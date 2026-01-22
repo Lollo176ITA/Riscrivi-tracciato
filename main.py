@@ -29,12 +29,18 @@ def get_csv_files(input_folder: str = "input") -> list:
     return list(Path(input_folder).glob("*.csv"))
 
 
-def process_csv(input_path: Path, columns: list, output_folder: str = "output") -> str:
+def process_csv(input_path: Path, columns: list, output_folder: str = "output", zip_name: str = None) -> str:
     """
     Processa un singolo file CSV:
     - Legge il file
     - Riordina/filtra le colonne secondo la configurazione
     - Salva il risultato in un file ZIP
+    
+    Args:
+        input_path: Percorso del file CSV di input
+        columns: Lista delle colonne da estrarre
+        output_folder: Cartella di output
+        zip_name: Nome personalizzato per il file ZIP (opzionale)
     
     Returns:
         Il nome del file ZIP creato
@@ -61,7 +67,15 @@ def process_csv(input_path: Path, columns: list, output_folder: str = "output") 
     
     # Crea il nuovo CSV con le colonne riordinate
     output_csv_name = input_path.stem + "_processed.csv"
-    output_zip_name = input_path.stem + "_processed.zip"
+    
+    # Usa il nome dello ZIP dalla configurazione se fornito, altrimenti usa il nome del file
+    if zip_name:
+        # Se il nome personalizzato non ha estensione .zip, aggiungila
+        base_zip_name = Path(zip_name).stem
+        output_zip_name = f"{base_zip_name}_{input_path.stem}.zip"
+    else:
+        output_zip_name = input_path.stem + "_processed.zip"
+    
     output_zip_path = Path(output_folder) / output_zip_name
     
     # Scrivi direttamente nel file ZIP
@@ -98,6 +112,11 @@ def main():
             print("Errore: nessuna colonna specificata in config.json")
             return
         print(f"Colonne da estrarre: {columns}")
+        
+        # Carica il nome dello ZIP se presente
+        zip_name = config.get("zip_name")
+        if zip_name:
+            print(f"Nome ZIP personalizzato: {zip_name}")
     except FileNotFoundError:
         print("Errore: file config.json non trovato")
         return
@@ -122,7 +141,7 @@ def main():
     for csv_file in csv_files:
         print(f"Processando: {csv_file.name}")
         try:
-            output_name = process_csv(csv_file, columns)
+            output_name = process_csv(csv_file, columns, zip_name=zip_name)
             print(f"     Creato: {output_name}")
             processed_count += 1
         except Exception as e:

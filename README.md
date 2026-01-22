@@ -21,9 +21,14 @@ Modifica il file `config.json` per specificare le colonne desiderate nell'ordine
         "numero",
         "cognome",
         "email"
-    ]
+    ],
+    "zip_name": "output"
 }
 ```
+
+**Parametri di configurazione:**
+- `columns`: Lista delle colonne da estrarre, nell'ordine desiderato (obbligatorio)
+- `zip_name`: Nome personalizzato per il file ZIP di output (opzionale). Se specificato, verrà usato come prefisso e il nome del file CSV di input verrà aggiunto come suffisso (es. `output_clienti.zip`). Se non specificato, il nome sarà automaticamente generato dal nome del file CSV di input seguito da `_processed`
 
 ### 2. Aggiungi i file CSV
 
@@ -80,11 +85,12 @@ Luigi,Verdi,456,luigi@email.com
 **Config (`config.json`):**
 ```json
 {
-    "columns": ["numero", "cognome"]
+    "columns": ["numero", "cognome"],
+    "zip_name": "risultati"
 }
 ```
 
-**Output (`output/clienti_processed.zip` → `clienti_processed.csv`):**
+**Output (`output/risultati_clienti.zip` → `clienti_processed.csv`):**
 ```csv
 numero,cognome
 123,Rossi
