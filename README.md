@@ -1,15 +1,15 @@
-# CSV Column Rewriter 🔄
+# CSV Column Rewriter 
 
 Un tool Python per riordinare e filtrare le colonne dei file CSV secondo una configurazione personalizzabile.
 
-## 📋 Funzionalità
+## Funzionalità
 
 - Legge tutti i file CSV dalla cartella `input`
 - Riordina e filtra le colonne secondo il file `config.json`
 - Salva i risultati come file ZIP compressi nella cartella `output`
 - Mostra il tempo di esecuzione nel terminale
 
-## 🚀 Utilizzo
+## Utilizzo
 
 ### 1. Configura le colonne
 
@@ -41,7 +41,7 @@ Oppure usa l'eseguibile `.exe` (disponibile negli artifact di GitHub Actions)
 
 I file processati saranno disponibili nella cartella `output/` come file ZIP.
 
-## 📁 Struttura del progetto
+## Struttura del progetto
 
 ```
 Riscrivi-tracciato/
@@ -55,7 +55,7 @@ Riscrivi-tracciato/
         └── build-exe.yml  # GitHub Action per creare .exe
 ```
 
-## 🔧 Build manuale dell'eseguibile
+## Build manuale dell'eseguibile
 
 ```bash
 pip install pyinstaller
@@ -64,11 +64,11 @@ pyinstaller --onefile --name csv-rewriter main.py
 
 L'eseguibile sarà disponibile in `dist/csv-rewriter.exe`
 
-## 🤖 GitHub Actions
+## GitHub Actions
 
 Ad ogni commit su `main` o `master`, viene automaticamente creato un eseguibile Windows `.exe` disponibile come artifact nella sezione Actions del repository.
 
-## 📝 Esempio
+## Esempio
 
 **Input CSV (`input/clienti.csv`):**
 ```csv
