@@ -70,7 +70,9 @@ def process_csv(input_path: Path, columns: list, output_folder: str = "output", 
     
     # Usa il nome dello ZIP dalla configurazione se fornito, altrimenti usa il nome del file
     if zip_name:
-        output_zip_name = zip_name if zip_name.endswith(".zip") else f"{zip_name}.zip"
+        # Se il nome personalizzato non ha estensione .zip, aggiungila
+        base_zip_name = Path(zip_name).stem
+        output_zip_name = f"{base_zip_name}_{input_path.stem}.zip"
     else:
         output_zip_name = input_path.stem + "_processed.zip"
     
