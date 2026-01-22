@@ -49,7 +49,7 @@ def process_csv(input_path: Path, columns: list, output_folder: str = "output") 
         # Verifica che le colonne richieste esistano
         missing_columns = [col for col in columns if col not in original_columns]
         if missing_columns:
-            print(f"  ⚠️  Attenzione: colonne mancanti in {input_path.name}: {missing_columns}")
+            print(f"Attenzione: colonne mancanti in {input_path.name}: {missing_columns}")
             # Usa solo le colonne che esistono
             valid_columns = [col for col in columns if col in original_columns]
         else:
@@ -82,7 +82,7 @@ def process_csv(input_path: Path, columns: list, output_folder: str = "output") 
 def main():
     """Funzione principale."""
     print("=" * 50)
-    print("🔄 CSV Column Rewriter")
+    print("CSV Column Rewriter")
     print("=" * 50)
     
     start_time = time.time()
@@ -95,45 +95,45 @@ def main():
         config = load_config()
         columns = config.get("columns", [])
         if not columns:
-            print("❌ Errore: nessuna colonna specificata in config.json")
+            print("Errore: nessuna colonna specificata in config.json")
             return
-        print(f"📋 Colonne da estrarre: {columns}")
+        print(f"Colonne da estrarre: {columns}")
     except FileNotFoundError:
-        print("❌ Errore: file config.json non trovato")
+        print("Errore: file config.json non trovato")
         return
     except json.JSONDecodeError as e:
-        print(f"❌ Errore nel parsing di config.json: {e}")
+        print(f"Errore nel parsing di config.json: {e}")
         return
     
     # Trova i file CSV
     csv_files = get_csv_files()
     
     if not csv_files:
-        print("\n⚠️  Nessun file CSV trovato nella cartella 'input'")
+        print("\nNessun file CSV trovato nella cartella 'input'")
         print("   Aggiungi i file CSV da processare nella cartella 'input'")
         elapsed_time = time.time() - start_time
-        print(f"\n⏱️  Processo completato in {elapsed_time:.2f} secondi")
+        print(f"\nProcesso completato in {elapsed_time:.2f} secondi")
         return
     
-    print(f"\n📁 Trovati {len(csv_files)} file CSV da processare\n")
+    print(f"\nTrovati {len(csv_files)} file CSV da processare\n")
     
     # Processa ogni file
     processed_count = 0
     for csv_file in csv_files:
-        print(f"  📄 Processando: {csv_file.name}")
+        print(f"Processando: {csv_file.name}")
         try:
             output_name = process_csv(csv_file, columns)
-            print(f"     ✅ Creato: {output_name}")
+            print(f"     Creato: {output_name}")
             processed_count += 1
         except Exception as e:
-            print(f"     ❌ Errore: {e}")
+            print(f"     Errore: {e}")
     
     # Tempo di esecuzione
     elapsed_time = time.time() - start_time
     
     print("\n" + "=" * 50)
-    print(f"✅ Processati {processed_count}/{len(csv_files)} file")
-    print(f"⏱️  Processo completato in {elapsed_time:.2f} secondi")
+    print(f"Processati {processed_count}/{len(csv_files)} file")
+    print(f"Processo completato in {elapsed_time:.2f} secondi")
     print("=" * 50)
 
 
