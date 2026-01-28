@@ -1,11 +1,14 @@
 # CSV Column Rewriter 
 
-Un tool Python per riordinare e filtrare le colonne dei file CSV secondo una configurazione personalizzabile.
+Un tool Python per riordinare e filtrare le colonne dei file CSV secondo una configurazione personalizzabile. Gestisce automaticamente la conversione di date e numeri, e replica le righe in base al numero di rate.
 
 ## Funzionalità
 
-- Legge tutti i file CSV dalla cartella `input`
+- Legge tutti i file CSV dalla cartella `input` (separatore `;`)
 - Riordina e filtra le colonne secondo il file `config.json`
+- **Converte le date** in formato `AAAAMMGG` (es: `15/01/2025` → `20250115`)
+- **Converte i numeri** rimuovendo separatori (es: `1.234,56` → `123456`)
+- **Replica le righe** in base al numero di rate del documento
 - Salva i risultati come file ZIP compressi nella cartella `output`
 - Mostra il tempo di esecuzione nel terminale
 
@@ -13,26 +16,28 @@ Un tool Python per riordinare e filtrare le colonne dei file CSV secondo una con
 
 ### 1. Configura le colonne
 
-Modifica il file `config.json` per specificare le colonne desiderate nell'ordine voluto:
+Modifica il file `config.json`:
 
 ```json
 {
-    "columns": [
-        "numero",
-        "cognome",
-        "email"
-    ],
-    "zip_name": "output"
+    "columns": ["Progressivo", "Codice_Fiscale", "Data_Emissione", "Importo_Totale", ...],
+    "date_columns": ["Data_Emissione", "Scadenza_Rata", ...],
+    "numeric_columns": ["Importo_Totale", "Importo_Rata", ...],
+    "rate_column": "Numero_Rata",
+    "total_rate_column": "Rateizzazione"
 }
 ```
 
-**Parametri di configurazione:**
-- `columns`: Lista delle colonne da estrarre, nell'ordine desiderato (obbligatorio)
-- `zip_name`: Nome personalizzato per il file ZIP di output (opzionale). Se specificato, verrà usato come prefisso e il nome del file CSV di input verrà aggiunto come suffisso (es. `output_clienti.zip`). Se non specificato, il nome sarà automaticamente generato dal nome del file CSV di input seguito da `_processed`
+- **columns**: Colonne da includere nell'output, nell'ordine desiderato
+- **date_columns**: Colonne da convertire in formato `AAAAMMGG`
+- **numeric_columns**: Colonne numeriche da cui rimuovere separatori (`.`, `,`)
+- **rate_column**: Nome della colonna che indica il numero rata corrente
+- **total_rate_column**: Nome della colonna che indica il totale delle rate
 
 ### 2. Aggiungi i file CSV
 
 Posiziona i file CSV da processare nella cartella `input/`
+(Il separatore deve essere `;`)
 
 ### 3. Esegui lo script
 
@@ -75,24 +80,23 @@ Ad ogni commit su `main` o `master`, viene automaticamente creato un eseguibile 
 
 ## Esempio
 
-**Input CSV (`input/clienti.csv`):**
+**Input CSV (`input/documenti.csv`):**
+
 ```csv
-nome,cognome,numero,email
-Mario,Rossi,123,mario@email.com
-Luigi,Verdi,456,luigi@email.com
+Progressivo;Codice_Fiscale;Data_Emissione;Importo_Totale;Rateizzazione;Numero_Rata
+1;RSSMRA80A01H501U;15/01/2025;1.234,56;3;1
+2;VRDLGU75B02H501X;20/01/2025;500,00;2;1
 ```
 
-**Config (`config.json`):**
-```json
-{
-    "columns": ["numero", "cognome"],
-    "zip_name": "risultati"
-}
+**Output (`output/documenti_processed.zip` → `documenti_processed.csv`):**
+
+```csv
+Progressivo;Codice_Fiscale;Data_Emissione;Importo_Totale;Rateizzazione;Numero_Rata
+1;RSSMRA80A01H501U;20250115;123456;3;1
+1;RSSMRA80A01H501U;20250115;123456;3;2
+1;RSSMRA80A01H501U;20250115;123456;3;3
+2;VRDLGU75B02H501X;20250120;50000;2;1
+2;VRDLGU75B02H501X;20250120;50000;2;2
 ```
 
-**Output (`output/risultati_clienti.zip` → `clienti_processed.csv`):**
-```csv
-numero,cognome
-123,Rossi
-456,Verdi
-```
+Nota: Il documento 1 con 3 rate viene replicato 3 volte, il documento 2 con 2 rate viene replicato 2 volte.
