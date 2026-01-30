@@ -109,7 +109,7 @@ def is_partita_iva(value: str) -> bool:
     return False
 
 
-def apply_transform(value: str, transform: str, row: dict, tipo_persona_col: str = None) -> str:
+def apply_transform(value: str, transform: str, row: dict, tipo_persona_col: str = None, config: dict = None) -> str:
     """
     Applica una trasformazione speciale al valore.
     
@@ -118,6 +118,7 @@ def apply_transform(value: str, transform: str, row: dict, tipo_persona_col: str
         transform: Tipo di trasformazione
         row: Riga completa (per accedere ad altri campi)
         tipo_persona_col: Valore della colonna tipo persona (F/G)
+        config: Configurazione completa (per accedere a mapping tables)
     
     Returns:
         Valore trasformato
@@ -129,7 +130,15 @@ def apply_transform(value: str, transform: str, row: dict, tipo_persona_col: str
     tipo_persona_value = row.get("codESoggPagIdUnivPagTipoIdUnivocoE", "").strip().upper()
     is_giuridica = tipo_persona_value == "G"
     
-    if transform == "extract_belfiore":
+    if transform == "map_tipo_dovuto":
+        # Mappa il codice tipo dovuto alla descrizione usando la tabella di mapping
+        if value and config:
+            mapping = config.get("tipo_dovuto_mapping", {})
+            code = value.strip()
+            return mapping.get(code, code)  # Ritorna il codice originale se non trovato
+        return value
+    
+    elif transform == "extract_belfiore":
         # Estrae la PRIMA sequenza di esattamente 4 caratteri tra underscore
         # Es: "_c_Ciaa_aa_bbb_" -> "Ciaa" (unica con 4 caratteri)
         # Es: "FLUSSO_H501_2025" -> "H501"
@@ -291,7 +300,7 @@ def process_csv(input_path: Path, config: dict, output_folder: str = "output", z
             
             # Applica trasformazione se presente
             if transform:
-                value = apply_transform(value, transform, row)
+                value = apply_transform(value, transform, row, config=config)
             
             # Formatta il valore
             value = format_value(value, meta["type"], meta["dim"])
