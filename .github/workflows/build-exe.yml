@@ -31,8 +31,8 @@ jobs:
       - name: Build executable
         run: |
           pyinstaller --onefile --name csv-rewriter main.py
-          mkdir -p releases
-          cp dist/csv-rewriter.exe releases/csv-rewriter.exe
+          if (-not (Test-Path releases)) { New-Item -ItemType Directory -Path releases }
+          Copy-Item dist/csv-rewriter.exe releases/csv-rewriter.exe
       
       - name: Commit executable to repository
         run: |
