@@ -29,22 +29,33 @@ def ensure_directories():
 
 
 def clean_input_folder():
-    """Cancella tutti i file CSV dalla cartella input, preservando .gitkeep."""
+    """Cancella tutti i file e cartelle dalla cartella input, preservando .gitkeep."""
     input_folder = Path("input")
     if input_folder.exists():
-        for file in input_folder.glob("*.csv"):
-            file.unlink()
-            print(f"  Cancellato: {file.name}")
+        for item in input_folder.iterdir():
+            if item.name != ".gitkeep":
+                if item.is_file():
+                    item.unlink()
+                    print(f"  Cancellato file: {item.name}")
+                elif item.is_dir():
+                    import shutil
+                    shutil.rmtree(item)
+                    print(f"  Cancellata cartella: {item.name}")
 
 
 def clean_output_folder():
-    """Cancella tutti i file dalla cartella output, preservando .gitkeep."""
+    """Cancella tutti i file e cartelle dalla cartella output, preservando .gitkeep."""
     output_folder = Path("output")
     if output_folder.exists():
-        for file in output_folder.iterdir():
-            if file.is_file() and file.name != ".gitkeep":
-                file.unlink()
-                print(f"  Cancellato: {file.name}")
+        for item in output_folder.iterdir():
+            if item.name != ".gitkeep":
+                if item.is_file():
+                    item.unlink()
+                    print(f"  Cancellato file: {item.name}")
+                elif item.is_dir():
+                    import shutil
+                    shutil.rmtree(item)
+                    print(f"  Cancellata cartella: {item.name}")
 
 
 def get_csv_files(input_folder: str = "input") -> list:

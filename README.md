@@ -38,8 +38,8 @@ Modifica il file `config.json`:
 ```
 
 **Parametri principali:**
-- **pulisci_input**: `true` per cancellare i CSV dalla cartella input dopo l'elaborazione (preserva `.gitkeep`)
-- **pulisci_output**: `true` per cancellare i file dalla cartella output prima dell'elaborazione (preserva `.gitkeep`)
+- **pulisci_input**: `true` per cancellare TUTTI i file e cartelle dalla cartella input dopo l'elaborazione (preserva `.gitkeep`)
+- **pulisci_output**: `true` per cancellare TUTTI i file e cartelle dalla cartella output prima dell'elaborazione (preserva `.gitkeep`)
 - **columns**: Array di configurazione colonne con:
   - `name`: Nome colonna output
   - `type`: Tipo dato (`alfabetico`, `numerico`, `data`, `booleano`, `alfanumerico`)

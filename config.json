@@ -1,6 +1,6 @@
 {
-    "pulisci_input": true,
-    "pulisci_output": true,
+    "pulisci_input": false,
+    "pulisci_output": false,
     "columns": [
         {"name": "Progressivo*", "type": "numerico", "dim": 4, "source": "_auto_progressivo"},
         {"name": "Codice_Belfiore*", "type": "alfabetico", "dim": 4, "source": "deNomeFlussoE", "transform": "extract_belfiore"},
