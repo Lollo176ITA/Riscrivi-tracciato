@@ -31,10 +31,20 @@ jobs:
       - name: Build executable
         run: |
           pyinstaller --onefile --name csv-rewriter main.py
+          mkdir -p releases
+          cp dist/csv-rewriter.exe releases/csv-rewriter.exe
+      
+      - name: Commit executable to repository
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add releases/csv-rewriter.exe
+          git commit -m "Build: Update csv-rewriter.exe [skip ci]" || echo "No changes to commit"
+          git push
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: csv-rewriter-windows
-          path: dist/csv-rewriter.exe
+          path: releases/csv-rewriter.exe
           retention-days: 30

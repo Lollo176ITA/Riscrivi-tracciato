@@ -28,6 +28,25 @@ def ensure_directories():
     Path("output").mkdir(exist_ok=True)
 
 
+def clean_input_folder():
+    """Cancella tutti i file CSV dalla cartella input, preservando .gitkeep."""
+    input_folder = Path("input")
+    if input_folder.exists():
+        for file in input_folder.glob("*.csv"):
+            file.unlink()
+            print(f"  Cancellato: {file.name}")
+
+
+def clean_output_folder():
+    """Cancella tutti i file dalla cartella output, preservando .gitkeep."""
+    output_folder = Path("output")
+    if output_folder.exists():
+        for file in output_folder.iterdir():
+            if file.is_file() and file.name != ".gitkeep":
+                file.unlink()
+                print(f"  Cancellato: {file.name}")
+
+
 def get_csv_files(input_folder: str = "input") -> list:
     """Restituisce la lista dei file CSV nella cartella input."""
     return list(Path(input_folder).glob("*.csv"))
@@ -325,13 +344,17 @@ def process_csv(input_path: Path, config: dict, output_folder: str = "output", z
         # Header senza apici
         csv_content.append(";".join(column_names))
         
-        # Dati con apici doppi SOLO per la colonna CAUSALE_DOVUTO
+        # Colonne che devono avere i doppi apici
+        columns_with_quotes = ["Causale_Dovuto*", "Descrizione_Dovuto*", "Via_Invio"]
+        
+        # Dati con apici doppi solo per colonne specifiche
         for row in processed_rows:
             row_values = []
             for col in column_names:
                 value = str(row.get(col, ""))
-                # Solo la colonna CAUSALE_DOVUTO ha le virgolette
-                if col == "CAUSALE_DOVUTO":
+                
+                # Applica virgolette solo per le colonne specificate
+                if col in columns_with_quotes:
                     # Escapa gli apici doppi raddoppiandoli (standard CSV)
                     value = value.replace('"', '""')
                     row_values.append(f'"{value}"')
@@ -361,6 +384,15 @@ def main():
             print("Errore: nessuna colonna specificata in config.json")
             return
         
+        # Leggi i flag di pulizia
+        pulisci_output = config.get("pulisci_output", False)
+        pulisci_input = config.get("pulisci_input", False)
+        
+        # Pulisci la cartella output se richiesto
+        if pulisci_output:
+            print("\nPulizia cartella output:")
+            clean_output_folder()
+        
         # Conta i tipi di colonne
         type_counts = {}
         for col in columns_config:
@@ -368,7 +400,7 @@ def main():
                 col_type = col.get("type", "alfabetico")
                 type_counts[col_type] = type_counts.get(col_type, 0) + 1
         
-        print(f"Colonne output: {len(columns_config)} colonne configurate")
+        print(f"\nColonne output: {len(columns_config)} colonne configurate")
         for t, count in type_counts.items():
             print(f"  - {t}: {count}")
         
@@ -410,6 +442,11 @@ def main():
             print(f"  -> Errore: {e}")
             import traceback
             traceback.print_exc()
+    
+    # Pulisci la cartella input se richiesto
+    if pulisci_input:
+        print("\nPulizia cartella input:")
+        clean_input_folder()
     
     elapsed_time = time.time() - start_time
     
